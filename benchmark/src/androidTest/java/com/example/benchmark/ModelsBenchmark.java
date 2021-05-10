@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.example.benchmark.json_parse.models.K_Model;
 import com.example.benchmark.json_parse.models.N_Deck;
 import com.example.benchmark.json_parse.models.N_Model;
 import com.example.benchmark.json_parse.old.JSONArray;
@@ -43,6 +44,8 @@ import com.google.gson.reflect.TypeToken;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
+
+import kotlinx.serialization.json.Json;
 
 /**
  * Benchmark, which will execute on an Android device.
@@ -102,6 +105,22 @@ public class ModelsBenchmark {
 
         mModels.clear();
     }
+
+
+//
+//    @Test
+//    public void kotlinx() {
+//        Map<Long, K_Model> mModels = null;
+//
+//        final BenchmarkState state = mBenchmarkRule.getState();
+//        Gson gson = new Gson();
+//
+//        while (state.keepRunning()) {
+//            Json.Default.de
+//        }
+//
+//        mModels.clear();
+//    }
 
 
     @Test
