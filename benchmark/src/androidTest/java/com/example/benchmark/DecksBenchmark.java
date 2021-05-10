@@ -7,6 +7,7 @@ import androidx.benchmark.junit4.BenchmarkRule;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.example.benchmark.json_parse.models.A_Deck;
 import com.example.benchmark.json_parse.models.N_Deck;
 import com.example.benchmark.json_parse.models.N_Model;
 import com.example.benchmark.json_parse.old.Deck;
@@ -115,13 +116,13 @@ public class DecksBenchmark {
 
     @Test
     public void jackson_jr() throws IOException {
-        Map<String, N_Deck> mDecks = null;
+        Map<String, A_Deck> mDecks = null;
 
         final BenchmarkState state = mBenchmarkRule.getState();
 
 
         while (state.keepRunning()) {
-            mDecks = JSON.std.mapOfFrom(N_Deck.class, decksJson);
+            mDecks = JSON.std.mapOfFrom(A_Deck.class, decksJson);
         }
 
         mDecks.clear();
