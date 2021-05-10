@@ -1,6 +1,11 @@
 package com.example.benchmark.json_parse.models;
 
 
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +25,78 @@ public class N_Deck {
     private long id;
     private long mod;
     private String desc;
+
+    private static int[] readIntArr(JsonParser jp) throws IOException {
+        // Check the first token
+        if (jp.currentToken() != JsonToken.START_ARRAY) {
+            throw new IllegalStateException("Expected '['");
+        }
+
+        int[] arr = new int[2];
+        int i = 0;
+
+        while (jp.nextToken() != JsonToken.END_ARRAY) {
+            arr[i] = jp.getIntValue();
+            i++;
+        }
+
+        return arr;
+    }
+
+    public static N_Deck createFromJacksonParser(JsonParser jp) throws IOException {
+        if (jp.currentToken() != JsonToken.START_OBJECT) {
+            throw new IllegalStateException("Expected '{'");
+        }
+        N_Deck deck = new N_Deck();
+        while (jp.nextToken() != JsonToken.END_OBJECT) {
+            String field = jp.getCurrentName();
+            jp.nextToken(); // move cursor to value token
+            switch (field) {
+                case "name":
+                    deck.setName(jp.getText());
+                    break;
+                case "extendRev":
+                    deck.setExtendRev(jp.getLongValue());
+                    break;
+                case "usn":
+                    deck.setUsn(jp.getLongValue());
+                    break;
+                case "conf":
+                    deck.setConf(jp.getLongValue());
+                    break;
+                case "id":
+                    deck.setId(jp.getLongValue());
+                    break;
+                case "mod":
+                    deck.setMod(jp.getLongValue());
+                    break;
+                case "desc":
+                    deck.setDesc(jp.getText());
+                    break;
+                case "collapsed":
+                    deck.setCollapsed(jp.getBooleanValue());
+                    break;
+                case "browserCollapsed":
+                    deck.setBrowserCollapsed(jp.getBooleanValue());
+                    break;
+                case "newToday":
+                    deck.setNewToday(readIntArr(jp));
+                    break;
+                case "lrnToday":
+                    deck.setLrnToday(readIntArr(jp));
+                    break;
+                case "revToday":
+                    deck.setRevToday(readIntArr(jp));
+                    break;
+                case "timeToday":
+                    deck.setTimeToday(readIntArr(jp));
+                    break;
+                default:
+                    jp.skipChildren();
+            }
+        }
+        return deck;
+    }
 
     public String getName() {
         return name;

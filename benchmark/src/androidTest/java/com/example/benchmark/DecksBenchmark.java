@@ -14,7 +14,10 @@ import com.example.benchmark.json_parse.old.Deck;
 import com.example.benchmark.json_parse.old.JSONArray;
 import com.example.benchmark.json_parse.old.JSONObject;
 import com.example.benchmark.json_parse.old.Model;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -128,6 +131,34 @@ public class DecksBenchmark {
         mDecks.clear();
     }
 
+    @Test
+    public void jackson_streaming() throws IOException {
+        Map<Long, N_Deck> mDecks = null;
+
+        final BenchmarkState state = mBenchmarkRule.getState();
+
+        while (state.keepRunning()) {
+            state.pauseTiming();
+            final JsonParser jp = new JsonFactory().createParser(decksJson);
+            state.resumeTiming();
+
+            mDecks = new HashMap<>();
+            if (jp.nextToken() != JsonToken.START_OBJECT) {
+                throw new IllegalStateException("Expected '{'");
+            }
+            while (jp.nextToken() != JsonToken.END_OBJECT) {
+                final Long key = jp.getValueAsLong();
+
+                jp.nextToken();
+                final N_Deck value = N_Deck.createFromJacksonParser(jp);
+                mDecks.put(key, value);
+            }
+            state.pauseTiming();
+            jp.close();
+            state.resumeTiming();
+        }
+        mDecks.clear();
+    }
 
     @Test
     public void moshi() throws IOException {

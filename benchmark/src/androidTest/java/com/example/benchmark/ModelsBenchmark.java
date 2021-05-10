@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.example.benchmark.json_parse.models.N_Deck;
 import com.example.benchmark.json_parse.models.N_Model;
 import com.example.benchmark.json_parse.old.JSONArray;
 import com.example.benchmark.json_parse.old.JSONObject;
@@ -134,6 +135,34 @@ public class ModelsBenchmark {
         mModels.clear();
     }
 
+    @Test
+    public void jackson_streaming() throws IOException {
+        Map<Long, N_Model> mModels = null;
+
+        final BenchmarkState state = mBenchmarkRule.getState();
+
+        while (state.keepRunning()) {
+            state.pauseTiming();
+            final JsonParser jp = new JsonFactory().createParser(modelsJson);
+            state.resumeTiming();
+
+            mModels = new HashMap<>();
+            if (jp.nextToken() != JsonToken.START_OBJECT) {
+                throw new IllegalStateException("Expected '{'");
+            }
+            while (jp.nextToken() != JsonToken.END_OBJECT) {
+                final Long key = jp.getValueAsLong();
+
+                jp.nextToken();
+                final N_Model value = N_Model.createFromJacksonParser(jp);
+                mModels.put(key, value);
+            }
+            state.pauseTiming();
+            jp.close();
+            state.resumeTiming();
+        }
+        mModels.clear();
+    }
 
     @Test
     public void moshi() throws IOException {
