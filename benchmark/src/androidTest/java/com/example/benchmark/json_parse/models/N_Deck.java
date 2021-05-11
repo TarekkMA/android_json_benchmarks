@@ -2,6 +2,9 @@ package com.example.benchmark.json_parse.models;
 
 
 
+import com.dslplatform.json.CompiledJson;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -9,6 +12,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIgnoreProperties(value = {"id"})
+@CompiledJson(onUnknown = CompiledJson.Behavior.IGNORE)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class N_Deck {
 
     private String name;

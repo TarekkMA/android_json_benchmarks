@@ -1,6 +1,7 @@
 package com.example.benchmark;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.benchmark.junit4.BenchmarkRule;
 import androidx.benchmark.BenchmarkState;
@@ -12,6 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -23,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.dslplatform.json.DslJson;
+import com.dslplatform.json.runtime.Settings;
 import com.example.benchmark.json_parse.models.K_Model;
 import com.example.benchmark.json_parse.models.N_Deck;
 import com.example.benchmark.json_parse.models.N_Model;
@@ -102,6 +106,27 @@ public class ModelsBenchmark {
             mModels = gson.fromJson(modelsJson, new TypeToken<Map<Long, N_Model>>() {
             }.getType());
         }
+
+        mModels.clear();
+    }
+
+
+    @Test
+    public void dsljson() throws IOException {
+        Map<Long, N_Model> mModels = null;
+
+        final BenchmarkState state = mBenchmarkRule.getState();
+        DslJson<Object> objectDslJson = new DslJson<>(Settings.basicSetup().allowArrayFormat(true));
+
+        while (state.keepRunning()) {
+            state.pauseTiming();
+            InputStream in = new ByteArrayInputStream(modelsJson.getBytes());
+            state.resumeTiming();
+            ParameterizedType parameterizedType = Types.newParameterizedType(Map.class, Long.class, N_Model.class);// from moshi
+            mModels = (Map<Long, N_Model>) objectDslJson.deserialize(parameterizedType, in);
+        }
+
+        mModels.entrySet().stream().limit(10).forEach(e -> Log.e("TEST", e.getKey() + ":" + e.getValue().getDid()));
 
         mModels.clear();
     }

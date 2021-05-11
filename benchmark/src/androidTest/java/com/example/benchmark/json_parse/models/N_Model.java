@@ -1,6 +1,7 @@
 package com.example.benchmark.json_parse.models;
 
 
+import com.dslplatform.json.CompiledJson;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@CompiledJson(onUnknown = CompiledJson.Behavior.IGNORE)
 public class N_Model {
 
     private long sortf;
