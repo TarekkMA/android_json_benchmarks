@@ -8,15 +8,20 @@ import androidx.test.core.app.ApplicationProvider;
 
 import com.example.benchmark.json_parse.models.object_model.OModel;
 import com.example.benchmark.json_parse.models.primitives_model.PModel;
+import com.example.benchmark.json_parse.treemodel.TMModel;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ModelsBenchmark2 {
 
@@ -26,6 +31,14 @@ public class ModelsBenchmark2 {
 
     private final Context context = ApplicationProvider.getApplicationContext();
     private String modelsJson;
+
+    @Before
+    public void setup() throws IOException {
+        try (InputStream open = context.getAssets().open("models.json")) {
+            modelsJson = new BufferedReader(new InputStreamReader(open))
+                    .lines().collect(Collectors.joining("\n"));
+        }
+    }
 
 
     @Test
@@ -61,6 +74,25 @@ public class ModelsBenchmark2 {
             state.resumeTiming();
 
             mModels = objectMapper.readValue(input, new TypeReference<Map<Long, OModel>>() {});
+        }
+
+        mModels.clear();
+    }
+
+
+    @Test
+    public void treemodel_jackson() throws IOException {
+        Map<Long, TMModel> mModels = null;
+
+        final BenchmarkState state = mBenchmarkRule.getState();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        while (state.keepRunning()) {
+            state.pauseTiming();
+            InputStream input = context.getAssets().open("models.json");
+            state.resumeTiming();
+
+            mModels = objectMapper.readValue(input, new TypeReference<Map<Long, TMModel>>() {});
         }
 
         mModels.clear();

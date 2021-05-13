@@ -129,8 +129,7 @@ public class ModelsBenchmark {
         final BenchmarkState state = mBenchmarkRule.getState();
         ObjectMapper objectMapper = AnkiSerialization.getObjectMapper();
         while (state.keepRunning()) {
-            mModels = objectMapper.readValue(modelsJson, new TypeReference<Map<Long, TMModel>>() {
-            });
+            mModels = objectMapper.readValue(modelsJson, new TypeReference<Map<Long, TMModel>>() {});
         }
 
         mModels.clear();
