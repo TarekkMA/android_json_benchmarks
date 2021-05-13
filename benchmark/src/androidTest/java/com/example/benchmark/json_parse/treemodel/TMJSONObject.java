@@ -53,6 +53,8 @@ import androidx.annotation.CheckResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -71,7 +73,7 @@ public class TMJSONObject implements Iterable<String> {
 
     private final ObjectNode mNode;
 
-
+    @JsonCreator
     public TMJSONObject(ObjectNode node) {
         mNode = node;
     }
@@ -325,7 +327,8 @@ public class TMJSONObject implements Iterable<String> {
         return clone;
     }
 
-    protected ObjectNode getJsonNode() {
+    @JsonValue
+    public ObjectNode getJsonNode() {
         return mNode;
     }
 

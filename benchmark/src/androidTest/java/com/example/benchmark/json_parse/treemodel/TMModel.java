@@ -22,6 +22,8 @@ import android.text.TextUtils;
 import androidx.annotation.CheckResult;
 
 import com.example.benchmark.json_parse.Consts;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +39,11 @@ import java.util.Set;
 public class TMModel extends TMJSONObject {
     public TMModel() {
         super();
+    }
+
+    @JsonCreator
+    public TMModel(ObjectNode node) {
+        super(node);
     }
 
     public TMModel(TMJSONObject json) {
