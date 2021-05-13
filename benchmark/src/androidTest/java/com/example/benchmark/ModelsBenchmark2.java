@@ -69,11 +69,7 @@ public class ModelsBenchmark2 {
         ObjectMapper objectMapper = new ObjectMapper();
 
         while (state.keepRunning()) {
-            state.pauseTiming();
-            InputStream input = context.getAssets().open("models.json");
-            state.resumeTiming();
-
-            mModels = objectMapper.readValue(input, new TypeReference<Map<Long, OModel>>() {});
+            mModels = objectMapper.readValue(modelsJson, new TypeReference<Map<Long, OModel>>() {});
         }
 
         mModels.clear();
