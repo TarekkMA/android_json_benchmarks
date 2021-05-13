@@ -2,12 +2,16 @@ package com.example.benchmark.json_parse.models;
 
 
 import com.dslplatform.json.CompiledJson;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CompiledJson(onUnknown = CompiledJson.Behavior.IGNORE)
 public class N_Model {
@@ -21,6 +25,18 @@ public class N_Model {
     private List<Object> vers = new ArrayList<Object>();
     private long type;
     private String css;
+
+    private Map<String, Object> extraProperties = new HashMap<>();
+
+    @JsonAnyGetter
+    public Map<String, Object> getExtraProperties() {
+        return extraProperties;
+    }
+
+    @JsonAnySetter
+    public void setExtraProperty(String name, Object value) {
+        extraProperties.put(name, value);
+    }
 
     public static N_Model createFromJacksonParser(JsonParser jp) throws IOException {
         if (jp.currentToken() != JsonToken.START_OBJECT) {
