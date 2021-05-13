@@ -9,6 +9,7 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +34,10 @@ import com.example.benchmark.json_parse.models.N_Model;
 import com.example.benchmark.json_parse.old.JSONArray;
 import com.example.benchmark.json_parse.old.JSONObject;
 import com.example.benchmark.json_parse.old.Model;
+import com.example.benchmark.json_parse.treemodel.AnkiSerialization;
+import com.example.benchmark.json_parse.treemodel.TMJSONArray;
+import com.example.benchmark.json_parse.treemodel.TMJSONObject;
+import com.example.benchmark.json_parse.treemodel.TMModel;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -95,7 +100,46 @@ public class ModelsBenchmark {
     }
 
 
+
+
     @Test
+    public void treemodel() {
+        Map<Long, TMModel> mModels = null;
+
+        final BenchmarkState state = mBenchmarkRule.getState();
+        while (state.keepRunning()) {
+            mModels = new HashMap<>();
+            TMJSONObject modelarray = new TMJSONObject(modelsJson);
+            TMJSONArray ids = modelarray.names();
+            if (ids != null) {
+                for (String id : ids.stringIterable()) {
+                    TMModel o = new TMModel(modelarray.getJSONObject(id));
+                    mModels.put(o.getLong("id"), o);
+                }
+            }
+        }
+
+        mModels.clear();
+    }
+
+    @Test
+    public void treemodel_parse_all() throws JsonProcessingException {
+        Map<Long, TMModel> mModels = null;
+
+        final BenchmarkState state = mBenchmarkRule.getState();
+        ObjectMapper objectMapper = AnkiSerialization.getObjectMapper();
+        while (state.keepRunning()) {
+            mModels = objectMapper.readValue(modelsJson, new TypeReference<Map<Long, TMModel>>() {
+            });
+        }
+
+        mModels.clear();
+    }
+
+
+
+    @Test
+    @Ignore
     public void gson() {
         Map<Long, N_Model> mModels = null;
 
@@ -112,6 +156,7 @@ public class ModelsBenchmark {
 
 
     @Test
+    @Ignore
     public void dsljson() throws IOException {
         Map<Long, N_Model> mModels = null;
 
@@ -149,6 +194,7 @@ public class ModelsBenchmark {
 
 
     @Test
+    @Ignore
     public void jackson() throws JsonProcessingException {
         Map<Long, N_Model> mModels = null;
 
@@ -166,6 +212,7 @@ public class ModelsBenchmark {
 
 
     @Test
+    @Ignore
     public void jackson_jr() throws IOException {
         Map<String, N_Model> mModels = null;
 
@@ -180,6 +227,7 @@ public class ModelsBenchmark {
     }
 
     @Test
+    @Ignore
     public void jackson_streaming() throws IOException {
         Map<Long, N_Model> mModels = null;
 
@@ -209,6 +257,7 @@ public class ModelsBenchmark {
     }
 
     @Test
+    @Ignore
     public void moshi() throws IOException {
         Map<Long, N_Model> mModels = null;
 
